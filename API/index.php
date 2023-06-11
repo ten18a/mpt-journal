@@ -16,7 +16,7 @@ $endpoint = strtok($endpoint, '?');
 // Route the request to the appropriate endpoint
 switch ($endpoint) {
     case 'testing':
-        include 'testing.php';
+        include 'testing/testing.php';
         break;
     // Add more cases for other endpoints specific to the unstable-beta version
     default:
