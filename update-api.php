@@ -1,17 +1,23 @@
 <?php
-$directory = './'; // Путь к директории
-$excludeFile = __FILE__; // Имя исполняемого файла
-$excludeFile2 = ".htaccess"; // Protect .htaccess
+$directory = dirname(__FILE__); // Абсолютный путь к директории
+$excludeFiles = array(basename(__FILE__), '.htaccess'); // Имена файлов, которые необходимо исключить
 
-// Получаем список всех файлов в директории
-$files = glob($directory . '*');
+// Получаем список всех файлов и подпапок в директории (рекурсивно)
+$files = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
+    RecursiveIteratorIterator::CHILD_FIRST
+);
 
 // Перебираем файлы и удаляем их
 foreach ($files as $file) {
-    // Проверяем, что файл не является исполняемым файлом
-    if ($file !== $excludeFile && $file !== $excludeFile2) {
-        // Удаляем файл
-        unlink($file);
+    // Проверяем, что файл не является одним из исключаемых файлов
+    if (!in_array($file->getFilename(), $excludeFiles)) {
+        // Удаляем файл или папку
+        if ($file->isDir()) {
+            rmdir($file->getRealPath());
+        } else {
+            unlink($file->getRealPath());
+        }
     }
 }
 
